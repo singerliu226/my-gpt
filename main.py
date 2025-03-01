@@ -1,7 +1,14 @@
 import streamlit as st
 from langchain.memory import ConversationBufferMemory
+from pydantic import validator
+from langchain.base_language import BaseLanguageModel
 
 from utils import get_chat_response
+
+class CustomModel(BaseLanguageModel):
+    @validator("your_field", allow_reuse=True)
+    def set_verbose(cls, v):
+        return v
 
 st.title("💬 克隆ChatGPT")
 
