@@ -3,7 +3,7 @@ from langchain.memory import ConversationBufferMemory
 
 from utils import get_chat_response
 
-st.title("💬 克隆ChatGPT")
+st.title("💬 唱子小模型")
 
 # 从 secrets.toml 文件中读取 OpenAI API 密钥
 openai_api_key = st.secrets["openai"]["api_key"]
