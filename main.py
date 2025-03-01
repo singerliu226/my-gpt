@@ -1,25 +1,20 @@
 import streamlit as st
 from langchain.memory import ConversationBufferMemory
-from pydantic import validator
-from langchain.base_language import BaseLanguageModel
 
 from utils import get_chat_response
 
-class CustomModel(BaseLanguageModel):
-    @validator("your_field", allow_reuse=True)
-    def set_verbose(cls, v):
-        return v
-
 st.title("💬 克隆ChatGPT")
 
+# 从 secrets.toml 文件中读取 OpenAI API 密钥
+openai_api_key = st.secrets["openai"]["api_key"]
+
 with st.sidebar:
-    openai_api_key = st.text_input("请输入OpenAI API Key：", type="password")
+    openai_api_key = st.text_input("请输入OpenAI API Key：", type="password", value=openai_api_key)
     st.markdown("[获取OpenAI API key](https://platform.openai.com/account/api-keys)")
 
 if "memory" not in st.session_state:
     st.session_state["memory"] = ConversationBufferMemory(return_messages=True)
-    st.session_state["messages"] = [{"role": "ai",
-                                     "content": "你好，我是你的AI助手，有什么可以帮你的吗？"}]
+    st.session_state["messages"] = [{"role": "ai", "content": "你好，我是你的AI助手，有什么可以帮你的吗？"}]
 
 for message in st.session_state["messages"]:
     st.chat_message(message["role"]).write(message["content"])
@@ -33,8 +28,7 @@ if prompt:
     st.chat_message("human").write(prompt)
 
     with st.spinner("AI正在思考中，请稍等..."):
-        response = get_chat_response(prompt, st.session_state["memory"],
-                                     openai_api_key)
+        response = get_chat_response(prompt, st.session_state["memory"], openai_api_key)
     msg = {"role": "ai", "content": response}
     st.session_state["messages"].append(msg)
     st.chat_message("ai").write(response)
